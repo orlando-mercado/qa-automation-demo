@@ -1,0 +1,52 @@
+# QA Automation Demo
+
+A small end-to-end QA automation project covering API testing, UI testing, and CI/CD — built to get hands-on practice with tools beyond what I used in my capstone (pytest, SQL) and co-op (unit testing, automated validation).
+
+## What This Project Tests
+
+**API tests** (`test_api.py`) — automated tests against the [dummyjson.com](https://dummyjson.com) REST API, covering:
+- Listing resources and validating response schema
+- Fetching a single resource by ID
+- Field-selection query parameters (`?select=`)
+- Search functionality (`?q=`), asserting results are actually relevant to the query, not just that the request succeeded
+- Full CRUD: create (POST), update (PUT), delete (DELETE)
+- A negative test case — verifying correct behavior when requesting a nonexistent resource
+
+**UI tests** (`test_ui.py`) — Playwright browser automation against the official [Playwright TodoMVC demo app](https://demo.playwright.dev/todomvc), covering:
+- Adding an item
+- Completing an item
+- Deleting an item
+
+Locators use Playwright's recommended user-facing strategies (`get_by_role`, `get_by_placeholder`, `get_by_text`) rather than brittle CSS/XPath selectors, for better resilience to markup changes.
+
+**Manual exploration** — a Postman collection (see `postman/` if exported) covering the same API endpoints with response assertions, used to explore and validate behavior before automating it in pytest.
+
+## Tools Used
+
+- **pytest** — test runner and assertions
+- **requests** — HTTP client for API tests
+- **Playwright (Python)** — browser automation for UI tests
+- **Postman** — manual/exploratory API testing
+- **GitHub Actions** — CI pipeline
+
+## Running Locally
+
+```bash
+python3 -m venv venv
+source venv/bin/activate
+pip install pytest requests pytest-playwright
+playwright install
+
+pytest test_api.py -v
+pytest test_ui.py -v
+```
+
+## Continuous Integration
+
+This project runs its full test suite automatically on every push and pull request via GitHub Actions (`.github/workflows/tests.yml`). The workflow checks out the code, installs dependencies (including Playwright's browser binaries), and runs both the API and UI test suites, reporting pass/fail status on each commit.
+
+Note: the workflow currently runs tests and reports status; it is not yet wired into a branch protection rule, so it doesn't block merges on failure — that would be the natural next step to turn this into an enforced quality gate rather than just a signal.
+
+## Why This Project
+
+Built as focused, hands-on practice to complement my testing experience from my capstone project (a clinic management system with 239 pytest tests, Jest, Locust load testing, and security/RBAC testing) and my co-op at Eli Lilly (automated data validation and unit testing in ASP.NET Core). This project applies the same risk-based, edge-case-first testing mindset to a new toolset — Postman, Playwright, and CI — in a small, complete, and demonstrable way.
